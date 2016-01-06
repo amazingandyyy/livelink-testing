@@ -26,7 +26,28 @@ function LiveLinks(fbname) {
         });
     };
 
-    
+    this.signup = function(alias, email, password) {
+        firebase.createUser({
+            email: email,
+            password: password
+        }, function(error, userData) {
+            if (error) {
+                console.log('Error creating user:', error);
+                instance.onError(error);
+            }else{
+                console.log('Successfully created user account with uid:', userData.uid);
+                // instance.auth = userData;
+                usersRef.child(userData.uid).set({alias: alias}, function(error) {
+                    if (error) {
+                        instance.onError(error);
+                    } else {
+                        instance.login(email,password);
+                    }
+                });
+            }
+        });
+    };
+
     this.logout = function(){
         firebase.unauth();
     };

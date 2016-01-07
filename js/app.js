@@ -56,6 +56,7 @@ function LiveLinks(fbname) {
     this.onLogin = function(user) {};
     this.onLogout = function() {};
     this.onLinksChanged = function(links) {};
+    this.onLinkUserAdded = function(linkId, alias) {};
     this.onError = function(error) {};
 
     //setup long-running firebase listeners 4-3 1:13

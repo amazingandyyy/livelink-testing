@@ -65,6 +65,21 @@ function LiveLinks(fbname) {
         firebase.unauth();
     };
 
+    function getSubmitters(linkId, userIds){
+        if(userIds) {
+            $.each(userIds, function(userId) {
+                var linkUserRef = linksRef.child(linkId).child('users').child(userId);
+                linkUserRef.once('value', function(snapshot) {
+                    usersRef.child(snapshot.key())
+                            .child('alias')
+                            .once('value', function(snapshot) {
+                                instance.onLinkUserAdded(linkId, snapshot.val());
+                            });
+                });
+            });
+        }
+    }
+
     // overrideable event functions
     this.onLogin = function(user) {};
     this.onLogout = function() {};
@@ -97,6 +112,7 @@ function LiveLinks(fbname) {
                         title: links[url].title,
                         url: atob(url)
                     })
+                    getSubmitters(url, links[url].users);
                 }
             }
             instance.onLinksChanged(preparedLinks);
@@ -133,7 +149,7 @@ $(document).ready(function(){
         });
     };
 
-    ll.onLinkUserAdded = function() {
+    ll.onLinkUserAdded = function(linkId, alias) {
         var submitters = $("[data-id='"+linkId+"'] span.submitters");
         if(submitters.text().indexOf(alias) == -1) {
             submitters.append(" " + alias);

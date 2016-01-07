@@ -7,6 +7,7 @@ function LiveLinks(fbname) {
     var instance = this;
 
     this.submitLink = function(url, title) {
+        var authData = firebase.getAuth();
         url = url.substring(0, 4) !== 'http' ? 'http://' + url : url;
         linksRef.child(btoa(url)).set({
             title: title
@@ -14,11 +15,12 @@ function LiveLinks(fbname) {
             if (error) {
                 instance.onError(error);
             }else{
+
                 linksRef.child(btoa(url))
                         .child('users')
-                        .child(instance.auth.uid)
+                        .child(authData.uid)
                         .set(true)
-                usersRef.child(instance.auth.uid)
+                usersRef.child(authData.uid)
                         .child('links')
                         .child(btoa(url))
                         .set(true)
@@ -111,7 +113,7 @@ function LiveLinks(fbname) {
                     preparedLinks.push({
                         title: links[url].title,
                         url: atob(url)
-                    })
+                    });
                     getSubmitters(url, links[url].users);
                 }
             }
@@ -148,7 +150,7 @@ $(document).ready(function(){
             $('.links-list').append(linkElement);
         });
     };
-
+// instance.onLinkUserAdded(linkId, snapshot.val());
     ll.onLinkUserAdded = function(linkId, alias) {
         var submitters = $("[data-id='"+linkId+"'] span.submitters");
         if(submitters.text().indexOf(alias) == -1) {

@@ -110,9 +110,13 @@ function LiveLinks(fbname) {
             var preparedLinks = [];
             for (var url in links) {
                 if (links.hasOwnProperty(url)) {
+                    // for (keyAsId in links[url].users){
+                    //     var authorOfUrl = keyAsId;
+                    // }
                     preparedLinks.push({
                         title: links[url].title,
-                        url: atob(url)
+                        url: atob(url),
+                        id: url
                     });
                     getSubmitters(url, links[url].users);
                 }
@@ -152,9 +156,10 @@ $(document).ready(function(){
     };
 // instance.onLinkUserAdded(linkId, snapshot.val());
     ll.onLinkUserAdded = function(linkId, alias) {
+        // console.log(linkId+'<br>'+alias);
         var submitters = $("[data-id='"+linkId+"'] span.submitters");
         if(submitters.text().indexOf(alias) == -1) {
-            submitters.append(" " + alias);
+            submitters.append("<b> " + alias+'</b>');
         }
     };
 

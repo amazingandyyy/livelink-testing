@@ -10,6 +10,19 @@ function LiveLinks(fbname) {
         url = url.substring(0, 4) !== 'http' ? 'http://' + url : url;
         linksRef.child(btoa(url)).set({
             title: title
+        }, function(error) {
+            if (error) {
+                instance.onError(error);
+            }else{
+                linksRef.child(btoa(url))
+                        .child('users')
+                        .child(instance.auth.uid)
+                        .set(true)
+                usersRef.child(instance.auth.uid)
+                        .child('links')
+                        .child(btoa(url))
+                        .set(true)
+            }
         });
     };
 

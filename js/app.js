@@ -111,9 +111,19 @@ $(document).ready(function(){
     ll.onLinksChanged = function(links) {
         $('.links-list').empty();
         links.map(function(link){
-            var linkElement = "<li class='list-group-item'> <a href='" + link.url + "'  target='_blank'>" + link.title + "</a></li>";
+            var linkElement = "<li data-id='" + link.id + "' class='list-group-item'>"+
+                              "<a href='" + link.url + "'  target='_blank'>" + link.title + "</a><br>"+
+                              "<span class='submitters'>sumbitted by:</span>"+
+                              "</li>";
             $('.links-list').append(linkElement);
         });
+    };
+
+    ll.onLinkUserAdded = function() {
+        var submitters = $("[data-id='"+linkId+"'] span.submitters");
+        if(submitters.text().indexOf(alias) == -1) {
+            submitters.append(" " + alias);
+        }
     };
 
     ll.onLogin = function() {
@@ -133,6 +143,8 @@ $(document).ready(function(){
     });
 
     $('.auth-links .signup a').click(function () {
+        $('.auth-form .signup form').find('input[type=text]').val('');
+        $('.auth-form .signup form').find('input[type=password]').val('');
         $('.auth-form, .auth-form .signup').show();
         $('.auth-form .login').hide();
         return false;

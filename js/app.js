@@ -16,7 +16,6 @@ function LiveLinks(fbname) {
             if (error) {
                 instance.onError(error);
             }else{
-                // var authData = firebase.getAuth();
                 linksRef.child(btoa(url))
                         .child('users')
                         .child(authData.uid)
@@ -28,6 +27,17 @@ function LiveLinks(fbname) {
             }
         });
     };
+
+    this.vote = function(voteId, voteVal) {
+        console.log(voteId, voteVal);
+        if(authData){
+            console.log('The logged user is:' + authData.uid);
+            linksRef.child(voteId)
+                    .child('votes')
+                    .child(authData.uid)
+                    .set(voteVal);    
+        }
+    }
 
     this.login = function(email, password){
         firebase.authWithPassword ({
@@ -111,6 +121,12 @@ function LiveLinks(fbname) {
             var preparedLinks = [];
             for (var url in links) {
                 if (links.hasOwnProperty(url)) {
+                    var voteTotal = 0;
+                    if(links[url].votes) {
+                        $.each(links[url].votes, function(userId, val) {
+                            voteTotal += val;
+                    });
+                    }
                     // for (keyAsId in links[url].users){
                     //     var authorOfUrl = keyAsId;
                     // }
@@ -149,9 +165,9 @@ $(document).ready(function(){
         $('.links-list').empty();
         links.map(function(link){
             var linkElement = "<li data-id='" + link.id + "' class='list-group-item'>" +
-             "<span class='vote-total'>" + link.voteTotal + "</span>" +
-             "<span class='glyphicon glyphicon-triangle-top up vote data-val='1'></span>" +
-             "<span class='glyphicon glyphicon-triangle-bottom down vote data-val='-1'></span>" +
+             "<span class='vote-total logout-hidden'>" + link.voteTotal + "</span>" +
+             "<span class='glyphicon glyphicon-triangle-top up vote logout-hidden' data-val='1'></span>" +
+             "<span class='glyphicon glyphicon-triangle-bottom down vote logout-hidden' data-val='-1'></span>" +
                                "<a href='" + link.url + "'  target='_blank'>" + link.title + "</a><br>" +
                                "<span class='submitters'>sumbitted by:</span>" +
                               "</li>";
@@ -159,7 +175,9 @@ $(document).ready(function(){
         });
 
         $('.vote').click(function(event) {
-             ll.vote($(this).parent().data().id, $(this).data().val);
+            var voteId = $(this).parent().attr('data-id');
+            var voteVal = $(this).data('val');
+            ll.vote(voteId, voteVal);
          });
     };
 // instance.onLinkUserAdded(linkId, snapshot.val());
@@ -180,12 +198,13 @@ $(document).ready(function(){
 
     ll.onLogin = function() {
         $('.auth-links .login, .auth-links .signup, .auth-form').hide();
-        $('.auth-links .logout').show();
+        $('.auth-links .logout, .show-submit-link').show();
+        // $('.logout-hidden').css('display', 'inline-block');
     };
 
     ll.onLogout = function() {
         $('.auth-links .login, .auth-links .signup').show();
-        $('.auth-links .logout').hide();
+        $('.auth-links .logout, .show-submit-link').hide();
     };
 
     $(".auth-links .login a").click(function () {

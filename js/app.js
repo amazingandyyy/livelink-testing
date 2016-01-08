@@ -29,10 +29,11 @@ function LiveLinks(fbname) {
     };
 
     this.vote = function(voteId, voteVal) {
-        linksRef.child(voteId)
-                .child('votes')
-                .child(authData.uid)
-                .set(voteVal);
+        console.log(voteId, voteVal);
+            linksRef.child(voteId)
+                    .child('votes')
+                    .child(authData.uid)
+                    .set(voteVal);    
     }
 
     this.login = function(email, password){
@@ -117,13 +118,20 @@ function LiveLinks(fbname) {
             var preparedLinks = [];
             for (var url in links) {
                 if (links.hasOwnProperty(url)) {
+                    var voteTotal = 0;
+                    if (links[url].votes) {
+                        $.each(links[url].votes, function(userId, val) {
+                            voteTotal += val;
+                    });
+                    }
                     // for (keyAsId in links[url].users){
                     //     var authorOfUrl = keyAsId;
                     // }
                     preparedLinks.push({
                         title: links[url].title,
                         url: atob(url),
-                        id: url
+                        id: url,
+                        voteTotal: voteTotal
                     });
                     getSubmitters(url, links[url].users);
                 }
@@ -156,8 +164,8 @@ $(document).ready(function(){
         links.map(function(link){
             var linkElement = "<li data-id='" + link.id + "' class='list-group-item'>" +
             "<span class='vote-total'>" + link.voteTotal + "</span>" +
-            "<span class='glyphicon glyphicon-triangle-top up vote data-val='1'></span>" +
-            "<span class='glyphicon glyphicon-triangle-bottom down vote data-val='-1'></span>" +
+            "<span class='glyphicon glyphicon-triangle-top up vote' data-val='1'></span>" +
+            "<span class='glyphicon glyphicon-triangle-bottom down vote' data-val='-1'></span>" +
                               "<a href='" + link.url + "'  target='_blank'>" + link.title + "</a><br>" +
                               "<span class='submitters'>sumbitted by:</span>" +
                               "</li>";
@@ -165,7 +173,9 @@ $(document).ready(function(){
         });
 
         $('.vote').click(function(event) {
-            ll.vote($(this).parent().data().id, $(this).data().val);
+            var voteId = $(this).parent().attr('data-id');
+            var voteVal = $(this).data('val');
+            ll.vote(voteId, voteVal);
         });
     };
 

@@ -149,18 +149,18 @@ $(document).ready(function(){
         $('.links-list').empty();
         links.map(function(link){
             var linkElement = var linkElement = "<li data-id='" + link.id + "' class='list-group-item'>" +
- +            "<span class='vote-total'>" + link.voteTotal + "</span>" +
- +            "<span class='glyphicon glyphicon-triangle-top up vote data-val='1'></span>" +
- +            "<span class='glyphicon glyphicon-triangle-bottom down vote data-val='-1'></span>" +
- +                              "<a href='" + link.url + "'  target='_blank'>" + link.title + "</a><br>" +
- +                              "<span class='submitters'>sumbitted by:</span>" +
+             "<span class='vote-total'>" + link.voteTotal + "</span>" +
+             "<span class='glyphicon glyphicon-triangle-top up vote data-val='1'></span>" +
+             "<span class='glyphicon glyphicon-triangle-bottom down vote data-val='-1'></span>" +
+                               "<a href='" + link.url + "'  target='_blank'>" + link.title + "</a><br>" +
+                               "<span class='submitters'>sumbitted by:</span>" +
                               "</li>";
             $('.links-list').append(linkElement);
         });
 
         $('.vote').click(function(event) {
- +            ll.vote($(this).parent().data().id, $(this).data().val);
- +        });
+             ll.vote($(this).parent().data().id, $(this).data().val);
+         });
     };
 // instance.onLinkUserAdded(linkId, snapshot.val());
     ll.onLinkUserAdded = function(linkId, alias) {
@@ -172,11 +172,11 @@ $(document).ready(function(){
     };
 
     this.vote = function(voteId, voteVal) {
- +        linksRef.child(voteId)
- +                .child('votes')
- +                .child(authData.uid)
- +                .set(voteVal);
- +    }
+         linksRef.child(voteId)
+                 .child('votes')
+                 .child(authData.uid)
+                 .set(voteVal);
+     }
 
     ll.onLogin = function() {
         $('.auth-links .login, .auth-links .signup, .auth-form').hide();

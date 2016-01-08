@@ -5,6 +5,7 @@ function LiveLinks(fbname) {
     var linksRef = firebase.child('links');
     var usersRef = firebase.child('users');
     var instance = this;
+    var authData = firebase.getAuth();
 
     this.submitLink = function(url, title) {
         
@@ -15,7 +16,6 @@ function LiveLinks(fbname) {
             if (error) {
                 instance.onError(error);
             }else{
-                var authData = firebase.getAuth();
                 linksRef.child(btoa(url))
                         .child('users')
                         .child(authData.uid)
@@ -23,10 +23,17 @@ function LiveLinks(fbname) {
                 usersRef.child(authData.uid)
                         .child('links')
                         .child(btoa(url))
-                        .set(true)
+                        .set(true);
             }
         });
     };
+
+    this.vote = function(voteId, voteVal) {
+        linksRef.child(voteId)
+                .child('votes')
+                .child(authData.uid)
+                .set(voteVal);
+    }
 
     this.login = function(email, password){
         firebase.authWithPassword ({
@@ -147,13 +154,23 @@ $(document).ready(function(){
     ll.onLinksChanged = function(links) {
         $('.links-list').empty();
         links.map(function(link){
-            var linkElement = "<li data-id='" + link.id + "' class='list-group-item'>"+
-                              "<a href='" + link.url + "'  target='_blank'>" + link.title + "</a><br>"+
-                              "<span class='submitters'>sumbitted by:</span>"+
+            var linkElement = "<li data-id='" + link.id + "' class='list-group-item'>" +
+            "<span class='vote-total'>" + link.voteTotal + "</span>" +
+            "<span class='glyphicon glyphicon-triangle-top up vote data-val='1'></span>" +
+            "<span class='glyphicon glyphicon-triangle-bottom down vote data-val='-1'></span>" +
+                              "<a href='" + link.url + "'  target='_blank'>" + link.title + "</a><br>" +
+                              "<span class='submitters'>sumbitted by:</span>" +
                               "</li>";
             $('.links-list').append(linkElement);
         });
+
+        $('.vote').click(function(event) {
+            ll.vote($(this).parent().data().id, $(this).data().val);
+        });
     };
+
+    
+
 // instance.onLinkUserAdded(linkId, snapshot.val());
     ll.onLinkUserAdded = function(linkId, alias) {
         // console.log(linkId+'<br>'+alias);

@@ -148,7 +148,7 @@ $(document).ready(function(){
     ll.onLinksChanged = function(links) {
         $('.links-list').empty();
         links.map(function(link){
-            var linkElement = var linkElement = "<li data-id='" + link.id + "' class='list-group-item'>" +
+            var linkElement = "<li data-id='" + link.id + "' class='list-group-item'>" +
              "<span class='vote-total'>" + link.voteTotal + "</span>" +
              "<span class='glyphicon glyphicon-triangle-top up vote data-val='1'></span>" +
              "<span class='glyphicon glyphicon-triangle-bottom down vote data-val='-1'></span>" +

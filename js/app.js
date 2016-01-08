@@ -7,15 +7,15 @@ function LiveLinks(fbname) {
     var instance = this;
 
     this.submitLink = function(url, title) {
-        var authData = firebase.getAuth();
+        
         url = url.substring(0, 4) !== 'http' ? 'http://' + url : url;
-        linksRef.child(btoa(url)).set({
+        linksRef.child(btoa(url)).push({
             title: title
         }, function(error) {
             if (error) {
                 instance.onError(error);
             }else{
-
+                var authData = firebase.getAuth();
                 linksRef.child(btoa(url))
                         .child('users')
                         .child(authData.uid)

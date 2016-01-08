@@ -5,7 +5,7 @@ function LiveLinks(fbname) {
     var linksRef = firebase.child('links');
     var usersRef = firebase.child('users');
     var instance = this;
-    var authData = firebase.getAuth();
+    
 
     this.submitLink = function(url, title) {
         
@@ -16,6 +16,7 @@ function LiveLinks(fbname) {
             if (error) {
                 instance.onError(error);
             }else{
+                var authData = firebase.getAuth();
                 linksRef.child(btoa(url))
                         .child('users')
                         .child(authData.uid)
@@ -29,9 +30,10 @@ function LiveLinks(fbname) {
     };
 
     this.vote = function(voteId, voteVal) {
+        var authData = firebase.getAuth();
         console.log(voteId, voteVal);
         if(authData){
-            console.log('The logged user is:' + authData.uid);
+            // console.log('The logged user is:' + authData.uid);
             linksRef.child(voteId)
                     .child('votes')
                     .child(authData.uid)
@@ -133,7 +135,8 @@ function LiveLinks(fbname) {
                     preparedLinks.push({
                         title: links[url].title,
                         url: atob(url),
-                        id: url
+                        id: url, 
+                        voteTotal: voteTotal
                     });
                     getSubmitters(url, links[url].users);
                 }

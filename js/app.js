@@ -5,10 +5,10 @@ function LiveLinks(fbname) {
     var linksRef = firebase.child('links');
     var usersRef = firebase.child('users');
     var instance = this;
-    var authData = firebase.getAuth();
+    
 
     this.submitLink = function(url, title) {
-        
+        var authData = firebase.getAuth();
         url = url.substring(0, 4) !== 'http' ? 'http://' + url : url;
         linksRef.child(btoa(url)).push({
             title: title
@@ -23,12 +23,13 @@ function LiveLinks(fbname) {
                 usersRef.child(authData.uid)
                         .child('links')
                         .child(btoa(url))
-                        .set(true);
+                        .set(true)
             }
         });
     };
 
     this.vote = function(voteId, voteVal) {
+        var authData = firebase.getAuth();
         console.log(voteId, voteVal);
             linksRef.child(voteId)
                     .child('votes')
@@ -119,11 +120,7 @@ function LiveLinks(fbname) {
             for (var url in links) {
                 if (links.hasOwnProperty(url)) {
                     var voteTotal = 0;
-                    if (links[url].votes) {
-                        $.each(links[url].votes, function(userId, val) {
-                            voteTotal += val;
-                    });
-                    }
+                    
                     // for (keyAsId in links[url].users){
                     //     var authorOfUrl = keyAsId;
                     // }

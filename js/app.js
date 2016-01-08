@@ -9,7 +9,7 @@ function LiveLinks(fbname) {
     this.submitLink = function(url, title) {
         
         url = url.substring(0, 4) !== 'http' ? 'http://' + url : url;
-        linksRef.child(btoa(url)).push({
+        linksRef.child(btoa(url)).update({
             title: title
         }, function(error) {
             if (error) {

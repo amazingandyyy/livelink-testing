@@ -254,3 +254,30 @@ $(document).ready(function(){
     ll.start();
 
 });
+
+
+// url: https://ll-practicing0102.firebaseio.com/?page=Security
+// {
+//     "rules": {
+//         ".read": true,
+//         ".write": true,
+//         "links": {
+//           ".write": "auth != null",
+//           "$link": {
+//             ".validate": "newData.hasChildren(['title']) && newData.child('title').val().length > 0 && newData.child('title').val().length < 200"  
+//           },
+//           "createAt": {
+//             ".validate": "(!data.exists() || !newData.exists()) && newData.val() <= now"  
+//           }
+//         },
+//         "users": {
+//           "$user": {
+//             "links": {
+//               "$link": {
+//                 ".validate": "root.child('links').child($link).child('users').child($user).exists()"  
+//               }  
+//             }
+//           }  
+//         }
+//     }
+// }

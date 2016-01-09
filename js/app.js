@@ -257,6 +257,7 @@ $(document).ready(function(){
 
 
 // url: https://ll-practicing0102.firebaseio.com/?page=Security
+// practicing-->
 // {
 //     "rules": {
 //         ".read": true,
@@ -281,3 +282,16 @@ $(document).ready(function(){
 //         }
 //     }
 // }
+// backups-->
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// 

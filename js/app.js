@@ -8,30 +8,32 @@ function LiveLinks(fbname) {
     
 
     this.submitLink = function(url, title) {
-        
         url = url.substring(0, 4) !== 'http' ? 'http://' + url : url;
-        linksRef.child(btoa(url)).update({
+        var linkRef = linksRef.child(btoa(url));
+        linkRef.update({
             title: title
         }, function(error) {
             if (error) {
                 instance.onError(error);
-            }else{
+            } else {
                 var authData = firebase.getAuth();
-                linksRef.child(btoa(url))
-                        .child('users')
-                        .child(authData.uid)
-                        .set(true)
+                linkRef.child('users')
+                       .child(authData.uid)
+                       .set(true)
                 usersRef.child(authData.uid)
                         .child('links')
                         .child(btoa(url))
                         .set(true);
+                instance.vote(btoa(url), 1);
+                linkRef.child('createdAt')
+                       .set(Firebase.ServerValue.TIMESTAMP);
             }
         });
     };
 
     this.vote = function(voteId, voteVal) {
         var authData = firebase.getAuth();
-        console.log(voteId, voteVal);
+        // console.log(voteId, voteVal);
         if(authData){
             // console.log('The logged user is:' + authData.uid);
             linksRef.child(voteId)

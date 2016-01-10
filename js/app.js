@@ -4,6 +4,7 @@ function LiveLinks(fbname) {
     this.firebase = firebase;
     var linksRef = firebase.child('links');
     var usersRef = firebase.child('users');
+    var aliasesRef = firebase.child('aliases');
     var instance = this;
     
 
@@ -25,6 +26,8 @@ function LiveLinks(fbname) {
                         .child(btoa(url))
                         .set(true);
                 instance.vote(btoa(url), 1);
+                linkRef.child('author')
+                       .set(authData.uid);
                 linkRef.child('createdAt')
                        .set(Firebase.ServerValue.TIMESTAMP);
             }
@@ -57,23 +60,30 @@ function LiveLinks(fbname) {
     };
 
     this.signup = function(alias, email, password) {
-        firebase.createUser({
-            email: email,
-            password: password
-        }, function(error, userData) {
-            if (error) {
-                console.log('Error creating user:', error);
-                instance.onError(error);
+        aliasesRef.child(alias).once('value', function(snapshot) {
+            if (snapshot.val()) {
+                instance.onError({message: 'That alias is token'});
             }else{
-                console.log('Successfully created user account with uid:', userData.uid);
-                // instance.auth = userData;
-                usersRef.child(userData.uid).set({alias: alias}, function(error) {
-                    if (error) {
-                        instance.onError(error);
-                    } else {
-                        instance.login(email,password);
-                    }
-                });
+                firebase.createUser({
+                email: email,
+                password: password
+            }, function(error, userData) {
+                if (error) {
+                    console.log('Error creating user:', error);
+                    instance.onError(error);
+                }else{
+                    console.log('Successfully created user account with uid:', userData.uid);
+                    // instance.auth = userData;
+                    usersRef.child(userData.uid).set({alias: alias}, function(error) {
+                        if (error) {
+                            instance.onError(error);
+                        } else {
+                            aliasesRef.child(alias).set(userData.uid);
+                            instance.login(email,password);
+                        }
+                    });
+                }
+            });    
             }
         });
     };
